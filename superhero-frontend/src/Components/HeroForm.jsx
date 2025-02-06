@@ -1,7 +1,7 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const HeroForm = ({ getHeroes }) => {
+const HeroForm = ({ getHeroes, editingHero, updateHero }) => {
   const [name, setName] = useState("");
   const [superpower, setSuperpower] = useState("");
   const [humility_score, setHumilityScore] = useState("");
@@ -9,27 +9,40 @@ const HeroForm = ({ getHeroes }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await axios.post(
-        "http://localhost:8000/api/v1/superheroes",
-        {
+    if (editingHero) {
+      updateHero(editingHero.id, {
+        name,
+        superpower,
+        humility_score: parseFloat(humility_score),
+      });
+    } else {
+      try {
+        await axios.post("http://localhost:8000/api/v1/superheroes", {
           name,
           superpower,
           humility_score: parseFloat(humility_score),
-        }
-      );
-      getHeroes();
-      setName("");
-      setSuperpower("");
-      setHumilityScore("");
-    } catch (error) {
-      console.log(error.response.data.message);
-      setError(error.response.data.message);
-      setTimeout(() => {
-        setError("");
-      }, 3000);
+        });
+      } catch (error) {
+        console.log(error.response.data.message);
+        setError(error.response.data.message);
+        setTimeout(() => {
+          setError("");
+        }, 3000);
+      }
     }
+    getHeroes();
+    setName("");
+    setSuperpower("");
+    setHumilityScore("");
   };
+
+  useEffect(() => {
+    if (editingHero) {
+      setName(editingHero.name);
+      setSuperpower(editingHero.superpower);
+      setHumilityScore(editingHero.humility_score);
+    }
+  }, [editingHero]);
 
   return (
     <form
@@ -68,7 +81,7 @@ const HeroForm = ({ getHeroes }) => {
         onChange={(e) => setHumilityScore(e.target.value)}
       />
       <button type="submit" className="btn btn-success align-self-end">
-        Submit
+        {editingHero ? "Update Hero" : "Add Hero"}
       </button>
       {error && <p className="text-center text-danger fs-3 mt-2">{error}</p>}
     </form>
