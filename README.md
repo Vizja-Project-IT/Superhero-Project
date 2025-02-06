@@ -7,7 +7,7 @@
 - Alper Inan
 - Ayse Begum Nas
 - Bahadir Gulen
-- Halil Onuy
+- Muhammet Halil Adiguzel
 
 ## Project Overview
 The Superhero Project is a web application that allows users to view and add superheroes along with their superpowers and humility scores. The project is divided into two main parts: the backend and the frontend.
